@@ -297,6 +297,14 @@ void f405DbgTick()
 {
   gpio_toggle(GPIO_PIN(GPIOA, 7));
 }
+// BRING-UP DEBUG: edgeTxInit() progress markers.
+//   stage 1 -> PC.13 high  (passed startSplash + first LCD DMA refresh)
+//   stage 2 -> PC.05 high  (passed storageReadRadioSettings / SD)
+void f405DbgStage(uint8_t s)
+{
+  if (s >= 1) { gpio_init(GPIO_PIN(GPIOC, 13), GPIO_OUT, GPIO_PIN_SPEED_LOW); gpio_set(GPIO_PIN(GPIOC, 13)); }
+  if (s >= 2) { gpio_init(GPIO_PIN(GPIOC, 5),  GPIO_OUT, GPIO_PIN_SPEED_LOW); gpio_set(GPIO_PIN(GPIOC, 5)); }
+}
 #endif
 #endif
 

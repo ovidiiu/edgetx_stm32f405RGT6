@@ -1438,6 +1438,10 @@ void moveTrimsToOffsets() // copy state of 3 primary to subtrim
 // Overridden by simulator startup
 uint8_t startOptions = 0;
 
+#if defined(RADIO_F405RGT6)
+void f405DbgStage(uint8_t s);  // BRING-UP DEBUG (defined in board.cpp)
+#endif
+
 void edgeTxInit()
 {
   TRACE("edgeTxInit");
@@ -1466,6 +1470,10 @@ void edgeTxInit()
   lcdRefreshWait();
 #endif
 
+#if defined(RADIO_F405RGT6)
+  f405DbgStage(1);  // passed splash + first LCD DMA refresh
+#endif
+
   // Load radio.yml so radio settings can be used
 #if defined(RTC_BACKUP_RAM)
   // Skip loading if EM startup and radio has RTC backup data
@@ -1474,6 +1482,10 @@ void edgeTxInit()
 #else
   // No RTC backup - try and load even for EM startup
   storageReadRadioSettings(false);
+#endif
+
+#if defined(RADIO_F405RGT6)
+  f405DbgStage(2);  // passed storageReadRadioSettings (SD radio.yml)
 #endif
 
 #if defined(GUI) && !defined(COLORLCD)
