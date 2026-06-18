@@ -1450,7 +1450,10 @@ void edgeTxInit()
   // BRING-UP: no SD storage. Load RAM defaults so LCD contrast is set and the
   // checksum is valid, and skip splash + stick calibration to reach main view.
   generalDefault();
-  startOptions |= OPENTX_START_NO_CALIBRATION | OPENTX_START_NO_SPLASH;
+  // NO_CHECKS also skips the blocking throttle/switch warning screens that
+  // otherwise wait forever for a keypress on a board with no working keys.
+  startOptions |= OPENTX_START_NO_CALIBRATION | OPENTX_START_NO_SPLASH |
+                  OPENTX_START_NO_CHECKS;
 #endif
 
 #if defined(COLORLCD)
