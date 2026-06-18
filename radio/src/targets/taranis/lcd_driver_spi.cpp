@@ -471,16 +471,26 @@ void lcdSetRefVolt(uint8_t val)
 // it is controller init / bias / missing charge-pump caps.
 void f405LcdTest()
 {
-  const unsigned bufSize = LCD_W * ((LCD_H + 7) / 8);
-  for (unsigned i = 0; i < bufSize; i++)
-    displayBuf[i] = (i & 1) ? 0xFF : 0x00;   // vertical stripes
-
+  // Self-documenting Vop sweep:
+  //  - top 6 pages (rows 0..47): vertical stripes (the image to judge)
+  //  - bottom 2 pages (rows 48..63): a left->right bar whose width = current
+  //    Vop (raw 0..63 mapped to 0..full width). When the stripes look
+  //    sharpest, the bar fraction tells the Vop value.
   for (;;) {
     for (uint8_t v = 0; v < 64; v++) {
+      uint8_t barw = (uint16_t)v * (LCD_W - 1) / 63;   // 0..127
+      for (uint8_t page = 0; page < 8; page++) {
+        for (uint8_t col = 0; col < LCD_W; col++) {
+          uint8_t b;
+          if (page < 6) b = (col & 1) ? 0xFF : 0x00;   // stripes
+          else          b = (col <= barw) ? 0xFF : 0x00; // Vop bar
+          displayBuf[page * LCD_W + col] = b;
+        }
+      }
       lcdWriteCommand(0x81);   // Set Vop / electronic contrast
       lcdWriteCommand(v);      // raw value 0..63
       lcdRefresh(true);
-      delay_ms(120);
+      delay_ms(250);
     }
   }
 }
