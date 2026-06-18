@@ -1446,6 +1446,13 @@ void edgeTxInit()
 {
   TRACE("edgeTxInit");
 
+#if defined(RADIO_F405RGT6)
+  // BRING-UP: no SD storage. Load RAM defaults so LCD contrast is set and the
+  // checksum is valid, and skip splash + stick calibration to reach main view.
+  generalDefault();
+  startOptions |= OPENTX_START_NO_CALIBRATION | OPENTX_START_NO_SPLASH;
+#endif
+
 #if defined(COLORLCD)
   // SD_CARD_PRESENT() does not work properly on most
   // B&W targets, so that we need to delay the detection
