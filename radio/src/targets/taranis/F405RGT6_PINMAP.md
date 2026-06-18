@@ -149,16 +149,21 @@ controller to your physical display.
 | TRAINER_OUT | PC9 (TIM3_CH4) |
 | TRAINER_DETECT | PA8 |
 
-### Navigation keys (GPIO, active-low)
-| Key | Pin |
-|---|---|
-| EXIT | PC13 |
-| ENTER | PA5 |
-| PAGEUP | PB10 |
-| PAGEDN | PB11 |
-| MDL | PB4 |
-| TELE | PB15 |
-| SYS | PA7 |
+### Menu navigation — rotary encoder + keys
+Primary navigation is a **rotary encoder** (NAVIGATION_X7_RM maps page change to
+rotation, so the knob both scrolls fields and changes pages). Push = ENTER.
+| Function | Pin | Notes |
+|---|---|---|
+| Encoder A | PB10 | EXTI10, internal pull-up |
+| Encoder B | PB11 | EXTI11, internal pull-up |
+| ENTER (encoder push) | PA5 | KEY_ENTER, active-low |
+| EXIT | PC13 | back/cancel |
+| MDL | PB4 | model select menu |
+| SYS | PA7 | radio settings menu |
+| TELE | PB15 | telemetry view (optional) |
+
+Minimum to navigate everything: encoder + EXIT + MDL + SYS. PAGEUP/PAGEDN keys
+removed (their pins are now the encoder); paging is done by the rotary.
 
 ### Switches (5× 2-position, GPIO, active-low pull-up)
 | Switch | Pin |

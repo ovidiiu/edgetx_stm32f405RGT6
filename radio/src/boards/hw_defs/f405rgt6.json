@@ -198,22 +198,6 @@
     },
     {
       "gpio": "GPIOB",
-      "pin": "LL_GPIO_PIN_10",
-      "active_low": true,
-      "key": "KEY_PAGEUP",
-      "name": "PAGEUP",
-      "label": "PAGE<"
-    },
-    {
-      "gpio": "GPIOB",
-      "pin": "LL_GPIO_PIN_11",
-      "active_low": true,
-      "key": "KEY_PAGEDN",
-      "name": "PAGEDN",
-      "label": "PAGE>"
-    },
-    {
-      "gpio": "GPIOB",
       "pin": "LL_GPIO_PIN_4",
       "active_low": true,
       "key": "KEY_MODEL",

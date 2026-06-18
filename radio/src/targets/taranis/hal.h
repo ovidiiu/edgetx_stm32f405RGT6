@@ -53,7 +53,25 @@
 #endif
 
 // Rotary Encoder
-#if defined(PCBX9E)
+#if defined(RADIO_F405RGT6)
+  // Primary menu navigation. Encoder A/B on PB.10/PB.11 (the freed PAGEUP/
+  // PAGEDN key pins); push-button wired to PA.05 = KEY_ENTER. Rotation scrolls
+  // fields and changes menu pages (NAVIGATION_X7_RM maps NEXT_PAGE to rotary).
+  #define ROTARY_ENCODER_NAVIGATION
+  #define ROTARY_ENCODER_GPIO             GPIOB
+  #define ROTARY_ENCODER_GPIO_PIN_A       LL_GPIO_PIN_10 // PB.10
+  #define ROTARY_ENCODER_GPIO_PIN_B       LL_GPIO_PIN_11 // PB.11
+  #define ROTARY_ENCODER_POSITION()       ((ROTARY_ENCODER_GPIO->IDR >> 10) & 0x03)
+  #define ROTARY_ENCODER_EXTI_LINE1       LL_EXTI_LINE_10
+  #define ROTARY_ENCODER_EXTI_LINE2       LL_EXTI_LINE_11
+  #define ROTARY_ENCODER_EXTI_PORT        LL_SYSCFG_EXTI_PORTB
+  #define ROTARY_ENCODER_EXTI_SYS_LINE1   LL_SYSCFG_EXTI_LINE10
+  #define ROTARY_ENCODER_EXTI_SYS_LINE2   LL_SYSCFG_EXTI_LINE11
+  #if !defined(USE_EXTI15_10_IRQ)
+    #define USE_EXTI15_10_IRQ
+    #define EXTI15_10_IRQ_Priority 5
+  #endif
+#elif defined(PCBX9E)
   #define ROTARY_ENCODER_NAVIGATION
   #define ROTARY_ENCODER_GPIO           GPIOD
   #define ROTARY_ENCODER_GPIO_PIN_A     LL_GPIO_PIN_12 // PD.12

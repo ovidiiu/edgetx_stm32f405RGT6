@@ -287,7 +287,7 @@ elseif(PCB STREQUAL X7)
     set(FLAVOUR f405rgt6)
     set(CPU_TYPE_FULL STM32F407xG)   # same die as F405RGT6: 1 MB flash, F407xx CMSIS
     set(HARDWARE_EXTERNAL_MODULE NO) # minimal scope: internal module only
-    set(ROTARY_ENCODER NO)
+    set(ROTARY_ENCODER YES)          # primary menu nav: encoder on PB10/PB11, push=ENTER
     set(HAPTIC YES)                  # provides per5ms(); GPIO haptic on PC6 (inert)
     set(STATUS_LEDS NO)
     set(BLUETOOTH NO)
