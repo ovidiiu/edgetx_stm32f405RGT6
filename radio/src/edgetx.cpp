@@ -1965,6 +1965,12 @@ uint32_t pwrCheck()
 #else
 uint32_t pwrCheck()
 {
+#if defined(RADIO_F405RGT6)
+  // BRING-UP: the WeAct dev board has no power button and may not sense USB
+  // VBUS. Never auto power off, so the radio always reaches the UI.
+  return e_power_on;
+#endif
+
 #if defined(SOFT_PWR_CTRL)
   if (pwrPressed()) {
     return e_power_on;
