@@ -462,6 +462,30 @@ void lcdSetRefVolt(uint8_t val)
 #endif
 }
 
+#if defined(RADIO_F405RGT6)
+// BRING-UP LCD TEST: fill the framebuffer with vertical stripes and sweep the
+// electronic-contrast (Vop) register across its full 0..63 range forever, so
+// the panel can be brought up without knowing the exact controller/contrast.
+// Watch the glass: if the stripes appear at some point in the sweep, wiring +
+// controller are good and it is only a contrast value. If nothing ever shows,
+// it is controller init / bias / missing charge-pump caps.
+void f405LcdTest()
+{
+  const unsigned bufSize = LCD_W * ((LCD_H + 7) / 8);
+  for (unsigned i = 0; i < bufSize; i++)
+    displayBuf[i] = (i & 1) ? 0xFF : 0x00;   // vertical stripes
+
+  for (;;) {
+    for (uint8_t v = 0; v < 64; v++) {
+      lcdWriteCommand(0x81);   // Set Vop / electronic contrast
+      lcdWriteCommand(v);      // raw value 0..63
+      lcdRefresh(true);
+      delay_ms(120);
+    }
+  }
+}
+#endif
+
 #if LCD_W == 128
 void lcdSetInvert(bool invert)
 {
