@@ -229,8 +229,10 @@
 #if defined(RADIO_F405RGT6)
   // No soft-power circuit on the WeAct dev board: it is powered from USB/VIN
   // with a hardware switch. PC1/PC2 are reused as analog trim inputs (T3/T4).
-  // With neither PWR_SWITCH_GPIO nor PWR_ON_GPIO defined, pwrPressed() returns
-  // true and the (non-PWR_BUTTON_PRESS) pwrCheck() keeps the radio powered on.
+  // No PWR_SWITCH_GPIO/PWR_ON_GPIO. NB: the X7 PCB defines PWR_BUTTON_PRESS, so
+  // pwrPressed() is overridden to return false for this target (see
+  // pwr_driver.cpp) — otherwise the default "true" triggers a shutdown
+  // countdown. Power off by removing power.
 #elif defined(PCBX9LITE)
   #define PWR_SWITCH_GPIO               GPIO_PIN(GPIOA, 7)  // PA.07
   #define PWR_ON_GPIO                   GPIO_PIN(GPIOA, 6)  // PA.06

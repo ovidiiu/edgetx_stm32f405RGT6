@@ -114,7 +114,14 @@ bool pwrForcePressed()
 
 bool pwrPressed()
 {
-#if defined(PWR_EXTRA_SWITCH_GPIO)
+#if defined(RADIO_F405RGT6)
+  // The WeAct dev board has no power button. The X7 PCB defines
+  // PWR_BUTTON_PRESS, so pwrCheck() treats a "pressed" reading as the user
+  // holding the power button and starts the shutdown countdown. Report "not
+  // pressed" (no PWR_SWITCH_GPIO would otherwise default to true) so the radio
+  // stays powered on. Power the board off by removing power.
+  return false;
+#elif defined(PWR_EXTRA_SWITCH_GPIO)
   return !gpio_read(PWR_SWITCH_GPIO) || !gpio_read(PWR_EXTRA_SWITCH_GPIO);
 #elif defined(PWR_SWITCH_GPIO)
   return !gpio_read(PWR_SWITCH_GPIO);
