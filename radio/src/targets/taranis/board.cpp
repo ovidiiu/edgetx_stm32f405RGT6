@@ -152,7 +152,7 @@ void boardInit()
   bluetoothInit(BLUETOOTH_DEFAULT_BAUDRATE, true);
 #endif
 
-#if defined(MANUFACTURER_RADIOMASTER) && defined(STM32F407xx)
+#if defined(MANUFACTURER_RADIOMASTER) && defined(STM32F407xx) && !defined(RADIO_F405RGT6)
   void board_set_bor_level();
   board_set_bor_level();
 #endif
@@ -280,7 +280,24 @@ void boardInit()
 #if defined(HAS_IMU)
   gyroInit();
 #endif
+
+#if defined(RADIO_F405RGT6)
+  // BRING-UP DEBUG: boardInit() completed -> drive PA.07 high.
+  gpio_init(GPIO_PIN(GPIOA, 7), GPIO_OUT, GPIO_PIN_SPEED_LOW);
+  gpio_set(GPIO_PIN(GPIOA, 7));
+#endif
 }
+
+#if defined(RADIO_F405RGT6)
+// BRING-UP DEBUG: called from perMain() so a scope on PA.07 shows:
+//   flat low      -> hung inside boardInit()
+//   steady high   -> boardInit() done, but main loop not reached
+//   square wave   -> main loop running (fully booted)
+void f405DbgTick()
+{
+  gpio_toggle(GPIO_PIN(GPIOA, 7));
+}
+#endif
 #endif
 
 void boardOff()

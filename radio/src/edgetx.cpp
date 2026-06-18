@@ -1356,6 +1356,12 @@ constexpr uint32_t PWR_PRESS_DURATION_MAX = 500; // 5s
 
 void runStartupAnimation()
 {
+#if defined(RADIO_F405RGT6)
+  // BRING-UP: skip the press-and-hold power gate. Latch power and continue
+  // booting regardless of the C1 (PWR_SWITCH) state.
+  pwrOn();
+  return;
+#endif
   tmr10ms_t start = get_tmr10ms();
   tmr10ms_t duration = 0;
   bool isPowerOn = false;
