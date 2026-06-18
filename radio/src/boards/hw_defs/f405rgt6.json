@@ -1,0 +1,188 @@
+{
+  "_comment": "Minimal bring-up hw def for STM32F405RGT6 (LQFP64) capsule. Based on zorro.json. All inputs confined to ports A/B/C + PD2. See targets/taranis/F405RGT6_PINMAP.md.",
+  "adc_inputs": {
+    "adcs": [
+      {
+        "name": "MAIN",
+        "adc": "ADC1",
+        "dma": "DMA2",
+        "dma_channel": "LL_DMA_CHANNEL_0",
+        "dma_stream": "LL_DMA_STREAM_4",
+        "dma_stream_irq": "DMA2_Stream4_IRQn",
+        "dma_stream_irq_handler": "DMA2_Stream4_IRQHandler",
+        "sample_time": "LL_ADC_SAMPLINGTIME_28CYCLES"
+      }
+    ],
+    "inputs": [
+      {
+        "name": "LH",
+        "type": "STICK",
+        "adc": "MAIN",
+        "gpio": "GPIOA",
+        "pin": "LL_GPIO_PIN_3",
+        "channel": "LL_ADC_CHANNEL_3",
+        "inverted": true
+      },
+      {
+        "name": "LV",
+        "type": "STICK",
+        "adc": "MAIN",
+        "gpio": "GPIOA",
+        "pin": "LL_GPIO_PIN_2",
+        "channel": "LL_ADC_CHANNEL_2"
+      },
+      {
+        "name": "RV",
+        "type": "STICK",
+        "adc": "MAIN",
+        "gpio": "GPIOA",
+        "pin": "LL_GPIO_PIN_0",
+        "channel": "LL_ADC_CHANNEL_0"
+      },
+      {
+        "name": "RH",
+        "type": "STICK",
+        "adc": "MAIN",
+        "gpio": "GPIOA",
+        "pin": "LL_GPIO_PIN_1",
+        "channel": "LL_ADC_CHANNEL_1",
+        "inverted": true
+      },
+      {
+        "name": "P1",
+        "type": "FLEX",
+        "adc": "MAIN",
+        "gpio": "GPIOB",
+        "pin": "LL_GPIO_PIN_0",
+        "channel": "LL_ADC_CHANNEL_8",
+        "inverted": true,
+        "label": "S1",
+        "short_label": "1",
+        "default": "POT"
+      },
+      {
+        "name": "P2",
+        "type": "FLEX",
+        "adc": "MAIN",
+        "gpio": "GPIOA",
+        "pin": "LL_GPIO_PIN_6",
+        "channel": "LL_ADC_CHANNEL_6",
+        "label": "S2",
+        "short_label": "2",
+        "default": "POT"
+      },
+      {
+        "name": "VBAT",
+        "type": "VBAT",
+        "adc": "MAIN",
+        "gpio": "GPIOC",
+        "pin": "LL_GPIO_PIN_0",
+        "channel": "LL_ADC_CHANNEL_10"
+      },
+      {
+        "name": "RTC_BAT",
+        "type": "RTC_BAT",
+        "adc": "MAIN",
+        "gpio": null,
+        "pin": null,
+        "channel": "LL_ADC_CHANNEL_VBAT"
+      }
+    ]
+  },
+  "switches": [
+    {
+      "name": "SA",
+      "type": "2POS",
+      "flags": 0,
+      "inverted": false,
+      "default": "TOGGLE",
+      "display": [0, 0],
+      "gpio": "GPIOB",
+      "pin": "LL_GPIO_PIN_5",
+      "is_cfs": false
+    }
+  ],
+  "keys": [
+    {
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_10",
+      "active_low": true,
+      "key": "KEY_EXIT",
+      "name": "EXIT",
+      "label": "RTN"
+    },
+    {
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_8",
+      "active_low": true,
+      "key": "KEY_ENTER",
+      "name": "ENTER",
+      "label": "Enter"
+    },
+    {
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_15",
+      "active_low": true,
+      "key": "KEY_PAGEUP",
+      "name": "PAGEUP",
+      "label": "PAGE<"
+    },
+    {
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_5",
+      "active_low": true,
+      "key": "KEY_PAGEDN",
+      "name": "PAGEDN",
+      "label": "PAGE>"
+    },
+    {
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_7",
+      "active_low": true,
+      "key": "KEY_MODEL",
+      "name": "MDL",
+      "label": "MDL"
+    },
+    {
+      "gpio": "GPIOC",
+      "pin": "LL_GPIO_PIN_13",
+      "active_low": true,
+      "key": "KEY_TELE",
+      "name": "TELE",
+      "label": "TELE"
+    },
+    {
+      "gpio": "GPIOB",
+      "pin": "LL_GPIO_PIN_4",
+      "active_low": true,
+      "key": "KEY_SYS",
+      "name": "SYS",
+      "label": "SYS"
+    }
+  ],
+  "trims": [],
+  "display": {
+    "w": 128,
+    "h": 64,
+    "phys_w": 128,
+    "phys_h": 64,
+    "depth": 1,
+    "color": 0,
+    "oled": 0,
+    "backlight_color": 0
+  },
+  "custom_switches": {
+    "rgb_led": 0,
+    "groups": 0
+  },
+  "hardware": {
+    "has_audio_mute": 0,
+    "has_bling_leds": 0,
+    "has_ext_module_support": 0,
+    "has_int_module_support": 1,
+    "sport_max_baudrate": 400000,
+    "surface": 0,
+    "cpu": "STM32F407xG",
+    "cpu_type": "STM32F4"
+  }
+}
