@@ -27,3 +27,4 @@ _wasi_sdk_fetch
 
 output/
 .devcontainer/devcontainer-lock.json
+_fw_stage2/
