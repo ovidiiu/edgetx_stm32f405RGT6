@@ -227,8 +227,10 @@
 
 // PWR and LED driver
 #if defined(RADIO_F405RGT6)
-  #define PWR_SWITCH_GPIO               GPIO_PIN(GPIOC, 1)  // PC.01
-  #define PWR_ON_GPIO                   GPIO_PIN(GPIOC, 2)  // PC.02
+  // No soft-power circuit on the WeAct dev board: it is powered from USB/VIN
+  // with a hardware switch. PC1/PC2 are reused as analog trim inputs (T3/T4).
+  // With neither PWR_SWITCH_GPIO nor PWR_ON_GPIO defined, pwrPressed() returns
+  // true and the (non-PWR_BUTTON_PRESS) pwrCheck() keeps the radio powered on.
 #elif defined(PCBX9LITE)
   #define PWR_SWITCH_GPIO               GPIO_PIN(GPIOA, 7)  // PA.07
   #define PWR_ON_GPIO                   GPIO_PIN(GPIOA, 6)  // PA.06

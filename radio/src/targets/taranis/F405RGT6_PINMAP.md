@@ -70,10 +70,17 @@ aren't enough pins for the full radio, which is why this bring-up is minimal.
 | Stick RH | PA1 | ADC1_IN1 |
 | Stick LV | PA2 | ADC1_IN2 |
 | Stick LH | PA3 | ADC1_IN3 |
-| Pot P2 | PA6 | ADC1_IN6 |
 | Pot P1 | PB0 | ADC1_IN8 |
+| Trim T1 (pot `P2`) | PA6 | ADC1_IN6 |
+| Trim T2 (pot `P3`) | PC3 | ADC1_IN13 |
+| Trim T3 (pot `P4`) | PC1 | ADC1_IN11 |
+| Trim T4 (pot `P5`) | PC2 | ADC1_IN12 |
 | VBAT sense | PC0 | ADC1_IN10 |
 | Audio out | PA4 | DAC1_OUT1 (DMA1_Str5, TIM6) |
+
+> The 4 analog trims are wired as ordinary analog pots (`P2`–`P5`, labelled
+> T1–T4). EdgeTX has no native "analog trim" concept — use them as mixer input
+> sources to act as trims. One ADC1 DMA scan covers all 9 axes + VBAT.
 
 ### System
 | Func | Pin | AF/periph |
@@ -87,10 +94,10 @@ aren't enough pins for the full radio, which is why this bring-up is minimal.
 | LSE | PC14/PC15 | 32.768 kHz xtal |
 
 ### Power
-| Func | Pin | Dir |
-|---|---|---|
-| PWR_SWITCH (read button) | PC1 | in |
-| PWR_ON (latch) | PC2 | out |
+No soft-power circuit on the WeAct dev board (powered from USB/VIN via a
+hardware switch). `PWR_SWITCH_GPIO`/`PWR_ON_GPIO` are **undefined**, so PC1/PC2
+are free for analog trims T3/T4. With no power macros, `pwrPressed()` returns
+true and the (non-`PWR_BUTTON_PRESS`) `pwrCheck()` keeps the radio powered on.
 
 ### Internal module — USART1 (AF7)
 | Func | Pin |
@@ -149,10 +156,18 @@ controller to your physical display.
 | ENTER | PA5 |
 | PAGEUP | PB10 |
 | PAGEDN | PB11 |
-| MDL | PB3 |
-| TELE | PB4 |
-| SYS | PB5 |
-| SA (test switch) | PC5 |
+| MDL | PB4 |
+| TELE | PB15 |
+| SYS | PA7 |
+
+### Switches (5× 2-position, GPIO, active-low pull-up)
+| Switch | Pin |
+|---|---|
+| SA | PC5 |
+| SB | PA15 |
+| SC | PA10 |
+| SD | PA8 |
+| SE | PC7 |
 
 ## 5. Pins reserved for later expansion
 

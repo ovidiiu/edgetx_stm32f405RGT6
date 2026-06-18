@@ -592,6 +592,27 @@ LEGACY_NAMES = [
                 "label": "S2",
                 "short_label": "2",
                 "description": "Potentiometer 2"
+            },
+            "P3": {
+                "yaml": "POT3",
+                "lua": "s3",
+                "label": "S3",
+                "short_label": "3",
+                "description": "Potentiometer 3"
+            },
+            "P4": {
+                "yaml": "POT4",
+                "lua": "s4",
+                "label": "S4",
+                "short_label": "4",
+                "description": "Potentiometer 4"
+            },
+            "P5": {
+                "yaml": "POT5",
+                "lua": "s5",
+                "label": "S5",
+                "short_label": "5",
+                "description": "Potentiometer 5"
             }
         }
     },

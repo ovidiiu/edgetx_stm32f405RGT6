@@ -56,8 +56,8 @@
         "pin": "LL_GPIO_PIN_0",
         "channel": "LL_ADC_CHANNEL_8",
         "inverted": true,
-        "label": "S1",
-        "short_label": "1",
+        "label": "P1",
+        "short_label": "P",
         "default": "POT"
       },
       {
@@ -67,8 +67,41 @@
         "gpio": "GPIOA",
         "pin": "LL_GPIO_PIN_6",
         "channel": "LL_ADC_CHANNEL_6",
-        "label": "S2",
+        "label": "T1",
+        "short_label": "1",
+        "default": "POT"
+      },
+      {
+        "name": "P3",
+        "type": "FLEX",
+        "adc": "MAIN",
+        "gpio": "GPIOC",
+        "pin": "LL_GPIO_PIN_3",
+        "channel": "LL_ADC_CHANNEL_13",
+        "label": "T2",
         "short_label": "2",
+        "default": "POT"
+      },
+      {
+        "name": "P4",
+        "type": "FLEX",
+        "adc": "MAIN",
+        "gpio": "GPIOC",
+        "pin": "LL_GPIO_PIN_1",
+        "channel": "LL_ADC_CHANNEL_11",
+        "label": "T3",
+        "short_label": "3",
+        "default": "POT"
+      },
+      {
+        "name": "P5",
+        "type": "FLEX",
+        "adc": "MAIN",
+        "gpio": "GPIOC",
+        "pin": "LL_GPIO_PIN_2",
+        "channel": "LL_ADC_CHANNEL_12",
+        "label": "T4",
+        "short_label": "4",
         "default": "POT"
       },
       {
@@ -99,6 +132,50 @@
       "display": [0, 0],
       "gpio": "GPIOC",
       "pin": "LL_GPIO_PIN_5",
+      "is_cfs": false
+    },
+    {
+      "name": "SB",
+      "type": "2POS",
+      "flags": 0,
+      "inverted": false,
+      "default": "TOGGLE",
+      "display": [1, 0],
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_15",
+      "is_cfs": false
+    },
+    {
+      "name": "SC",
+      "type": "2POS",
+      "flags": 0,
+      "inverted": false,
+      "default": "TOGGLE",
+      "display": [2, 0],
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_10",
+      "is_cfs": false
+    },
+    {
+      "name": "SD",
+      "type": "2POS",
+      "flags": 0,
+      "inverted": false,
+      "default": "TOGGLE",
+      "display": [3, 0],
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_8",
+      "is_cfs": false
+    },
+    {
+      "name": "SE",
+      "type": "2POS",
+      "flags": 0,
+      "inverted": false,
+      "default": "TOGGLE",
+      "display": [4, 0],
+      "gpio": "GPIOC",
+      "pin": "LL_GPIO_PIN_7",
       "is_cfs": false
     }
   ],

@@ -518,10 +518,6 @@ void initLoggingTimer();
 
 void perMain()
 {
-#if defined(RADIO_F405RGT6)
-  { void f405DbgTick(); f405DbgTick(); }  // BRING-UP DEBUG heartbeat on PA.07
-#endif
-
   DEBUG_TIMER_START(debugTimerPerMain1);
 
   checkSpeakerVolume();

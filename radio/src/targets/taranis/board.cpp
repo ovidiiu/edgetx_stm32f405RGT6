@@ -283,14 +283,6 @@ void boardInit()
 
 }
 
-#if defined(RADIO_F405RGT6)
-// BRING-UP DEBUG: heartbeat on PA.08 (spare). Square wave on a scope => the
-// main loop is running (board booted). Drop once verified on the LCD.
-void f405DbgTick()
-{
-  gpio_toggle(GPIO_PIN(GPIOA, 8));
-}
-#endif
 #endif
 
 void boardOff()
