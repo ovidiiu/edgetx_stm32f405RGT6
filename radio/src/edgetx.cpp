@@ -1515,7 +1515,18 @@ void edgeTxInit()
 #endif
 
   // SDCARD related stuff, only enable if normal boot
-#if !defined(RADIO_F405RGT6)  // BRING-UP: skip all SD card access
+#if defined(RADIO_F405RGT6)
+  // BRING-UP Stage 2: mount the onboard microSD over SDIO. On failure show the
+  // standard NO_SDCARD screen so SDIO bring-up is observable instead of a silent
+  // hang; storage itself still runs on RAM defaults (see storage block below),
+  // so an empty/unformatted card cannot block reaching the UI.
+  if (!sdMounted())
+    sdInit();
+  if (!sdMounted()) {
+    g_eeGeneral.pwrOffSpeed = 2;
+    runFatalErrorScreen(STR_NO_SDCARD);
+  }
+#else
   if (!UNEXPECTED_SHUTDOWN()) {
 
     if (!sdMounted())
@@ -1545,7 +1556,7 @@ void edgeTxInit()
 
     logsInit();
   }
-#endif  // !RADIO_F405RGT6
+#endif  // RADIO_F405RGT6
 
   luaInitMainState();
 #if defined(COLORLCD) && defined(LUA)

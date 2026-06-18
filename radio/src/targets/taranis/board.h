@@ -273,7 +273,7 @@ void ledBlue();
 #endif
 
 #if defined(RADIO_F405RGT6)
-  #define LCD_CONTRAST_DEFAULT          53 // measured working Vop for this panel
+  #define LCD_CONTRAST_DEFAULT          62 // near-max Vop: panel was too faint at 53
 #elif defined(OLED_SCREEN)
   #define LCD_CONTRAST_DEFAULT          254 // full brightness
 #elif defined(RADIO_TX12) || defined(RADIO_TX12MK2) || defined(RADIO_BOXER) || defined(RADIO_MT12)
