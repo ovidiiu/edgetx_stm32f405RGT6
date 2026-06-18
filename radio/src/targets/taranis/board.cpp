@@ -281,29 +281,14 @@ void boardInit()
   gyroInit();
 #endif
 
-#if defined(RADIO_F405RGT6)
-  // BRING-UP DEBUG: boardInit() completed -> drive PA.07 high.
-  gpio_init(GPIO_PIN(GPIOA, 7), GPIO_OUT, GPIO_PIN_SPEED_LOW);
-  gpio_set(GPIO_PIN(GPIOA, 7));
-#endif
 }
 
 #if defined(RADIO_F405RGT6)
-// BRING-UP DEBUG: called from perMain() so a scope on PA.07 shows:
-//   flat low      -> hung inside boardInit()
-//   steady high   -> boardInit() done, but main loop not reached
-//   square wave   -> main loop running (fully booted)
+// BRING-UP DEBUG: heartbeat on PA.08 (spare). Square wave on a scope => the
+// main loop is running (board booted). Drop once verified on the LCD.
 void f405DbgTick()
 {
-  gpio_toggle(GPIO_PIN(GPIOA, 7));
-}
-// BRING-UP DEBUG: edgeTxInit() progress markers.
-//   stage 1 -> PC.13 high  (passed startSplash + first LCD DMA refresh)
-//   stage 2 -> PC.05 high  (passed storageReadRadioSettings / SD)
-void f405DbgStage(uint8_t s)
-{
-  if (s >= 1) { gpio_init(GPIO_PIN(GPIOC, 13), GPIO_OUT, GPIO_PIN_SPEED_LOW); gpio_set(GPIO_PIN(GPIOC, 13)); }
-  if (s >= 2) { gpio_init(GPIO_PIN(GPIOC, 5),  GPIO_OUT, GPIO_PIN_SPEED_LOW); gpio_set(GPIO_PIN(GPIOC, 5)); }
+  gpio_toggle(GPIO_PIN(GPIOA, 8));
 }
 #endif
 #endif

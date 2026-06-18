@@ -137,7 +137,7 @@
     },
     {
       "gpio": "GPIOB",
-      "pin": "LL_GPIO_PIN_3",
+      "pin": "LL_GPIO_PIN_4",
       "active_low": true,
       "key": "KEY_MODEL",
       "name": "MDL",
@@ -145,15 +145,15 @@
     },
     {
       "gpio": "GPIOB",
-      "pin": "LL_GPIO_PIN_4",
+      "pin": "LL_GPIO_PIN_15",
       "active_low": true,
       "key": "KEY_TELE",
       "name": "TELE",
       "label": "TELE"
     },
     {
-      "gpio": "GPIOB",
-      "pin": "LL_GPIO_PIN_5",
+      "gpio": "GPIOA",
+      "pin": "LL_GPIO_PIN_7",
       "active_low": true,
       "key": "KEY_SYS",
       "name": "SYS",

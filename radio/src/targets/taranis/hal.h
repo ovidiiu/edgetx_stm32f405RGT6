@@ -683,7 +683,9 @@
 #endif
 
 // Trainer Port
-#if defined(PCBXLITES) || defined(PCBX9LITE)
+#if defined(RADIO_F405RGT6)
+  // No trainer port - PC.08/PC.09 are used by the onboard microSD (SDIO)
+#elif defined(PCBXLITES) || defined(PCBX9LITE)
   // on these 2 radios the trainer port already uses DMA1_Stream6, we won't use the DMA
   #define TRAINER_IN_GPIO               GPIO_PIN(GPIOD, 13) // PD.13
   #define TRAINER_IN_TIMER_Channel      LL_TIM_CHANNEL_CH2
@@ -994,12 +996,13 @@
   #define SSD1309_LCD
 #endif
 #if defined(RADIO_F405RGT6)
-  // Hardware SPI3 (AF6) like PCBX7, but LCD_RST moved off PD.12 -> PC.03
-  #define LCD_MOSI_GPIO                 GPIO_PIN(GPIOC, 12) // PC.12  SPI3_MOSI
-  #define LCD_CLK_GPIO                  GPIO_PIN(GPIOC, 10) // PC.10  SPI3_SCK
-  #define LCD_A0_GPIO                   GPIO_PIN(GPIOC, 11) // PC.11
-  #define LCD_NCS_GPIO                  GPIO_PIN(GPIOA, 15) // PA.15
-  #define LCD_RST_GPIO                  GPIO_PIN(GPIOC, 3)  // PC.03
+  // Hardware SPI3 (AF6) moved to PB.03/PB.05 so PC.10-12 are free for SDIO.
+  // Control lines on PB.12-14 (freed from SPI2 SD, now on SDIO).
+  #define LCD_MOSI_GPIO                 GPIO_PIN(GPIOB, 5)  // PB.05  SPI3_MOSI
+  #define LCD_CLK_GPIO                  GPIO_PIN(GPIOB, 3)  // PB.03  SPI3_SCK
+  #define LCD_A0_GPIO                   GPIO_PIN(GPIOB, 12) // PB.12
+  #define LCD_NCS_GPIO                  GPIO_PIN(GPIOB, 13) // PB.13
+  #define LCD_RST_GPIO                  GPIO_PIN(GPIOB, 14) // PB.14
   #define LCD_DMA                       DMA1
   #define LCD_DMA_Stream                DMA1_Stream7
   #define LCD_DMA_Stream_IRQn           DMA1_Stream7_IRQn
@@ -1158,6 +1161,18 @@
 #endif
 #endif
 
+#if defined(RADIO_F405RGT6)
+  // Onboard microSD via SDIO. Pins (PC8-12 + PD2, AF12) are hardcoded in
+  // diskio_sdio.cpp; only DMA + clock dividers are needed here.
+  #define STORAGE_USE_SDIO
+  #define SD_SDIO_DMA                   DMA2
+  #define SD_SDIO_DMA_STREAM            DMA2_Stream3
+  #define SD_SDIO_DMA_CHANNEL           LL_DMA_CHANNEL_4
+  #define SD_SDIO_DMA_IRQn              DMA2_Stream3_IRQn
+  #define SD_SDIO_DMA_IRQHANDLER        DMA2_Stream3_IRQHandler
+  #define SD_SDIO_CLK_DIV(fq)           ((48000000 / (fq)) - 2)
+  #define SD_SDIO_TRANSFER_CLK_DIV      SD_SDIO_CLK_DIV(24000000)
+#else
 #define STORAGE_USE_SDCARD_SPI
 #if defined(RADIO_GX12)
 #define SD_LONG_BUSY_WAIT               (true)
@@ -1173,6 +1188,7 @@
 #define SD_SPI_DMA_RX_STREAM            LL_DMA_STREAM_3
 #define SD_SPI_DMA_TX_STREAM            LL_DMA_STREAM_4
 #define SD_SPI_DMA_CHANNEL              LL_DMA_CHANNEL_0
+#endif
 
 // Audio
 #define AUDIO_OUTPUT_GPIO               GPIO_PIN(GPIOA, 4)
