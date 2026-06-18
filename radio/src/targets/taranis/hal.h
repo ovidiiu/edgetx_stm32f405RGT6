@@ -226,7 +226,10 @@
 #endif
 
 // PWR and LED driver
-#if defined(PCBX9LITE)
+#if defined(RADIO_F405RGT6)
+  #define PWR_SWITCH_GPIO               GPIO_PIN(GPIOC, 1)  // PC.01
+  #define PWR_ON_GPIO                   GPIO_PIN(GPIOC, 2)  // PC.02
+#elif defined(PCBX9LITE)
   #define PWR_SWITCH_GPIO               GPIO_PIN(GPIOA, 7)  // PA.07
   #define PWR_ON_GPIO                   GPIO_PIN(GPIOA, 6)  // PA.06
 #elif defined(PCBXLITE)
@@ -246,7 +249,9 @@
   #define PWR_ON_GPIO                   GPIO_PIN(GPIOD, 0)  // PD.00
 #endif
 
-#if defined(RADIO_X9DP2019)
+#if defined(RADIO_F405RGT6)
+  // minimal bring-up: no status LEDs
+#elif defined(RADIO_X9DP2019)
   #define STATUS_LEDS
   #define GPIO_LED_GPIO_ON              gpio_clear
   #define GPIO_LED_GPIO_OFF             gpio_set
@@ -444,7 +449,25 @@
 #if defined(PCBXLITE)
 #define EXTERNAL_ANTENNA
 #endif
-#if defined(PCBXLITE) || defined(PCBX9LITE)
+#if defined(RADIO_F405RGT6)
+  // Serial internal module on USART1 (mirrors Zorro), all on ports B/C
+  #define INTMODULE_PWR_GPIO               GPIO_PIN(GPIOC, 4) // PC.04
+  #define INTMODULE_BOOTCMD_GPIO           GPIO_PIN(GPIOB, 1) // PB.01
+  #define INTMODULE_BOOTCMD_DEFAULT        0 // RESET
+  #define INTMODULE_TX_GPIO                GPIO_PIN(GPIOB, 6) // PB.06
+  #define INTMODULE_RX_GPIO                GPIO_PIN(GPIOB, 7) // PB.07
+  #define INTMODULE_USART                  USART1
+  #define INTMODULE_USART_IRQHandler       USART1_IRQHandler
+  #define INTMODULE_USART_IRQn             USART1_IRQn
+  #define INTMODULE_DMA                    DMA2
+  #define INTMODULE_DMA_STREAM             LL_DMA_STREAM_7
+  #define INTMODULE_DMA_STREAM_IRQ         DMA2_Stream7_IRQn
+  #define INTMODULE_DMA_STREAM_IRQHandler  DMA2_Stream7_IRQHandler
+  #define INTMODULE_DMA_CHANNEL            LL_DMA_CHANNEL_4
+  #define INTMODULE_RX_DMA                 DMA2
+  #define INTMODULE_RX_DMA_STREAM          LL_DMA_STREAM_2
+  #define INTMODULE_RX_DMA_CHANNEL         LL_DMA_CHANNEL_4
+#elif defined(PCBXLITE) || defined(PCBX9LITE)
   #if defined(PCBXLITES) || defined(PCBX9LITE)
     #define INTMODULE_PWR_GPIO             GPIO_PIN(GPIOA, 15) // PA.15
   #else
@@ -896,7 +919,17 @@
 #define USB_GPIO_AF                     GPIO_AF10
 
 // BackLight
-#if defined(PCBX9E)
+#if defined(RADIO_F405RGT6)
+  // TIM1_CH3 on PA.10 (advanced timer -> BDTR/MOE required)
+  #define BACKLIGHT_TIMER_FREQ          (PERI2_FREQUENCY * TIMER_MULT_APB2)
+  #define BACKLIGHT_TIMER               TIM1
+  #define BACKLIGHT_GPIO                GPIO_PIN(GPIOA, 10) // PA.10
+  #define BACKLIGHT_GPIO_AF             GPIO_AF1
+  #define BACKLIGHT_CCMR2               TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 // Channel 3, PWM
+  #define BACKLIGHT_CCER                TIM_CCER_CC3E
+  #define BACKLIGHT_COUNTER_REGISTER    BACKLIGHT_TIMER->CCR3
+  #define BACKLIGHT_BDTR                TIM_BDTR_MOE
+#elif defined(PCBX9E)
   #define BACKLIGHT_TIMER_FREQ          (PERI2_FREQUENCY * TIMER_MULT_APB2)
   #define BACKLIGHT_TIMER               TIM9
   #define BACKLIGHT_GPIO_1              GPIO_PIN(GPIOE, 6) // PE.06
@@ -960,7 +993,22 @@
 #if defined(RADIO_T14) || defined(RADIO_GX12) || defined(RADIO_V14)
   #define SSD1309_LCD
 #endif
-#if defined(PCBX9E)
+#if defined(RADIO_F405RGT6)
+  // Hardware SPI3 (AF6) like PCBX7, but LCD_RST moved off PD.12 -> PC.03
+  #define LCD_MOSI_GPIO                 GPIO_PIN(GPIOC, 12) // PC.12  SPI3_MOSI
+  #define LCD_CLK_GPIO                  GPIO_PIN(GPIOC, 10) // PC.10  SPI3_SCK
+  #define LCD_A0_GPIO                   GPIO_PIN(GPIOC, 11) // PC.11
+  #define LCD_NCS_GPIO                  GPIO_PIN(GPIOA, 15) // PA.15
+  #define LCD_RST_GPIO                  GPIO_PIN(GPIOC, 3)  // PC.03
+  #define LCD_DMA                       DMA1
+  #define LCD_DMA_Stream                DMA1_Stream7
+  #define LCD_DMA_Stream_IRQn           DMA1_Stream7_IRQn
+  #define LCD_DMA_Stream_IRQHandler     DMA1_Stream7_IRQHandler
+  #define LCD_DMA_FLAGS                 (DMA_HIFCR_CTCIF7 | DMA_HIFCR_CHTIF7 | DMA_HIFCR_CTEIF7 | DMA_HIFCR_CDMEIF7 | DMA_HIFCR_CFEIF7)
+  #define LCD_DMA_FLAG_INT              DMA_HIFCR_CTCIF7
+  #define LCD_SPI                       SPI3
+  #define LCD_GPIO_AF                   GPIO_AF6
+#elif defined(PCBX9E)
   #define LCD_MOSI_GPIO                 GPIO_PIN(GPIOC, 12) // PC.12
   #define LCD_CLK_GPIO                  GPIO_PIN(GPIOC, 10) // PC.10
   #define LCD_A0_GPIO                   GPIO_PIN(GPIOC, 11) // PC.11
@@ -1027,7 +1075,8 @@
 #define I2C_B1                          I2C1
 #define I2C_B1_GPIO_AF                  LL_GPIO_AF_4
 
-#if defined(PCBXLITE) || defined(PCBX9LITE) || defined(PCBX7ACCESS) || \
+#if defined(RADIO_F405RGT6) || \
+    defined(PCBXLITE) || defined(PCBX9LITE) || defined(PCBX7ACCESS) || \
     defined(RADIO_ZORRO) || defined(RADIO_POCKET) || defined(RADIO_X9DP2019) || \
     defined(RADIO_GX12) || defined(RADIO_V12) || defined(RADIO_V14)
   #define I2C_B1_SCL_GPIO               GPIO_PIN(GPIOB, 8)  // PB.08
@@ -1038,7 +1087,10 @@
 #endif
 
 // EEPROM
-#if defined(PCBXLITE) || defined(PCBX9LITE)
+#if defined(RADIO_F405RGT6)
+  #define EEPROM_WP_GPIO                GPIOC
+  #define EEPROM_WP_GPIO_PIN            LL_GPIO_PIN_7  // PC.07
+#elif defined(PCBXLITE) || defined(PCBX9LITE)
   #define EEPROM_WP_GPIO                GPIOD
   #define EEPROM_WP_GPIO_PIN            LL_GPIO_PIN_7  // PD.07
 #elif defined(PCBX7ACCESS)
@@ -1094,8 +1146,8 @@
 #endif
 
 // SD - SPI2
-#if defined(RADIO_FAMILY_T20) || defined(RADIO_T14) || defined(RADIO_T12MAX) || defined(RADIO_TPROS) || defined(RADIO_BUMBLEBEE) || defined(RADIO_GX12)
-  // Using chip, so no detect
+#if defined(RADIO_F405RGT6) || defined(RADIO_FAMILY_T20) || defined(RADIO_T14) || defined(RADIO_T12MAX) || defined(RADIO_TPROS) || defined(RADIO_BUMBLEBEE) || defined(RADIO_GX12)
+  // No card-detect pin: SD assumed always present (minimal bring-up)
 #else
 #if defined(PCBXLITE) || defined(PCBX9LITE)
   #define SD_PRESENT_GPIO           GPIO_PIN(GPIOD, 10) // PD.10
@@ -1153,7 +1205,10 @@
 #endif
 
 // Haptic
-#if defined(PCBXLITE) || defined(PCBX9LITE) || defined(RADIO_ZORRO) || defined(RADIO_POCKET) || defined(RADIO_TX12MK2)|| defined(RADIO_BOXER) || defined(RADIO_MT12) || defined(RADIO_T20V2)  || defined(RADIO_T14) || defined(RADIO_T12MAX) || defined(RADIO_TPROS) || defined(RADIO_V14) || defined(RADIO_V12) || defined(RADIO_BUMBLEBEE) || defined(RADIO_GX12)
+#if defined(RADIO_F405RGT6)
+  // haptic disabled for minimal bring-up; pin reserved, not driven
+  #define HAPTIC_GPIO                   GPIO_PIN(GPIOC, 6) // PC.06
+#elif defined(PCBXLITE) || defined(PCBX9LITE) || defined(RADIO_ZORRO) || defined(RADIO_POCKET) || defined(RADIO_TX12MK2)|| defined(RADIO_BOXER) || defined(RADIO_MT12) || defined(RADIO_T20V2)  || defined(RADIO_T14) || defined(RADIO_T12MAX) || defined(RADIO_TPROS) || defined(RADIO_V14) || defined(RADIO_V12) || defined(RADIO_BUMBLEBEE) || defined(RADIO_GX12)
   #define HAPTIC_PWM
   #define HAPTIC_GPIO                   GPIO_PIN(GPIOB, 3) // PB.03
   #define HAPTIC_GPIO_AF                GPIO_AF1

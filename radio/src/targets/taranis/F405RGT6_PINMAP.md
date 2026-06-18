@@ -109,33 +109,50 @@ DMA: TX = DMA2_Stream7_Ch4, RX = DMA2_Stream2_Ch4 (as source).
 | SD_MISO | PB14 |
 | SD_MOSI | PB15 |
 | SD_CS | PB12 (soft) |
-| SD_PRESENT | PC5 (in, optional) |
+| SD_PRESENT | *none* — card assumed always present |
 
 DMA: DMA1_Stream3 (RX) / Stream4 (TX), Ch0.
 
-### LCD — soft (bit-banged) SPI, any GPIO, no AF
+### LCD — hardware SPI3 (AF6), same as PCBX7 except RST
 | Func | Pin |
 |---|---|
-| LCD_CLK | PC10 |
-| LCD_MOSI | PC11 |
-| LCD_A0 (D/C) | PC12 |
-| LCD_NCS | PD2 |
-| LCD_RST | PC3 |
-| Backlight | PB8 (TIM10_CH1 AF3, or plain GPIO) |
+| LCD_CLK | PC10 (SPI3_SCK) |
+| LCD_MOSI | PC12 (SPI3_MOSI) |
+| LCD_A0 (D/C) | PC11 (GPIO) |
+| LCD_NCS | PA15 (GPIO) |
+| LCD_RST | PC3 (GPIO — moved off PD12) |
+| Backlight | PA10 (TIM1_CH3 AF1, BDTR/MOE set) |
 
-> Match the LCD controller to your physical display; the source uses the
-> `lcd_driver_spi.cpp` 128×64 monochrome path.
+DMA: DMA1_Stream7. Driver: `lcd_driver_spi.cpp` (128×64 mono). Match the
+controller to your physical display.
+
+### I²C1 (EEPROM) — AF4
+| Func | Pin |
+|---|---|
+| I2C1_SCL | PB8 |
+| I2C1_SDA | PB9 |
+| EEPROM_WP | PC7 |
+
+> Populate a 24Cxx EEPROM on PB8/PB9, or move settings storage to SD.
+
+### Trainer — TIM3 (AF2), defaults already on safe pins
+| Func | Pin |
+|---|---|
+| TRAINER_IN | PC8 (TIM3_CH3) |
+| TRAINER_OUT | PC9 (TIM3_CH4) |
+| TRAINER_DETECT | PA8 |
 
 ### Navigation keys (GPIO, active-low)
 | Key | Pin |
 |---|---|
-| ENTER | PA8 |
-| EXIT | PA10 |
-| PAGEUP | PA15 |
-| PAGEDN | PA5 |
-| MDL | PA7 |
-| TELE | PC13 |
-| SYS | PB4 |
+| EXIT | PC13 |
+| ENTER | PA5 |
+| PAGEUP | PB10 |
+| PAGEDN | PB11 |
+| MDL | PB3 |
+| TELE | PB4 |
+| SYS | PB5 |
+| SA (test switch) | PC5 |
 
 ## 5. Pins reserved for later expansion
 
@@ -183,7 +200,20 @@ cmake -DPCB=X7 -DPCBREV=F405RGT6 ...
 
 - [x] Confirm chip = F407xG build path, 1 MB, 12 MHz HSE
 - [x] Master pin map (this doc) + minimal `f405rgt6.json`
-- [ ] Add CMake `PCBREV F405RGT6` branch
-- [ ] Add `RADIO_F405RGT6` overrides in `hal.h`
-- [ ] Test compile, fix any remaining D/E/F/G references the preprocessor pulls in
+- [x] Add CMake `PCBREV F405RGT6` branch
+- [x] Add `RADIO_F405RGT6` overrides in `hal.h`
+- [x] Register flavour in `tools/build-common.sh` + CI workflow `build_f405rgt6.yml`
+- [ ] Green CI build (fix any remaining D/E/F/G references the preprocessor pulls in)
 - [ ] Flash + bring up LCD, sticks, SD, USB
+
+### Build it
+- **Cloud (no local toolchain):** push to GitHub → the **Build F405RGT6 capsule**
+  Action compiles in the EdgeTX container and uploads `*.bin` as an artifact.
+- **Local (if you ever get a toolchain):**
+  `cmake --fresh -S radio -B build -DPCB=X7 -DPCBREV=F405RGT6 -DCMAKE_BUILD_TYPE=Release && make -C build -j firmware`
+
+### Still inert / non-functional in this build (documented, not wired)
+- **Telemetry** stays on USART2 (PD4/5/6) — compiles but won't work until moved
+  to another USART in the driver.
+- **External module / heartbeat** disabled (`HARDWARE_EXTERNAL_MODULE NO`).
+- **Status LEDs, haptic, rotary** disabled.

@@ -35,6 +35,9 @@ get_target_build_options() {
         zorro)
             BUILD_OPTIONS+="-DPCB=X7 -DPCBREV=ZORRO"
             ;;
+        f405rgt6)
+            BUILD_OPTIONS+="-DPCB=X7 -DPCBREV=F405RGT6"
+            ;;
         pocket)
             BUILD_OPTIONS+="-DPCB=X7 -DPCBREV=POCKET"
             ;;

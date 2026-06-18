@@ -97,15 +97,15 @@
       "inverted": false,
       "default": "TOGGLE",
       "display": [0, 0],
-      "gpio": "GPIOB",
+      "gpio": "GPIOC",
       "pin": "LL_GPIO_PIN_5",
       "is_cfs": false
     }
   ],
   "keys": [
     {
-      "gpio": "GPIOA",
-      "pin": "LL_GPIO_PIN_10",
+      "gpio": "GPIOC",
+      "pin": "LL_GPIO_PIN_13",
       "active_low": true,
       "key": "KEY_EXIT",
       "name": "EXIT",
@@ -113,39 +113,39 @@
     },
     {
       "gpio": "GPIOA",
-      "pin": "LL_GPIO_PIN_8",
+      "pin": "LL_GPIO_PIN_5",
       "active_low": true,
       "key": "KEY_ENTER",
       "name": "ENTER",
       "label": "Enter"
     },
     {
-      "gpio": "GPIOA",
-      "pin": "LL_GPIO_PIN_15",
+      "gpio": "GPIOB",
+      "pin": "LL_GPIO_PIN_10",
       "active_low": true,
       "key": "KEY_PAGEUP",
       "name": "PAGEUP",
       "label": "PAGE<"
     },
     {
-      "gpio": "GPIOA",
-      "pin": "LL_GPIO_PIN_5",
+      "gpio": "GPIOB",
+      "pin": "LL_GPIO_PIN_11",
       "active_low": true,
       "key": "KEY_PAGEDN",
       "name": "PAGEDN",
       "label": "PAGE>"
     },
     {
-      "gpio": "GPIOA",
-      "pin": "LL_GPIO_PIN_7",
+      "gpio": "GPIOB",
+      "pin": "LL_GPIO_PIN_3",
       "active_low": true,
       "key": "KEY_MODEL",
       "name": "MDL",
       "label": "MDL"
     },
     {
-      "gpio": "GPIOC",
-      "pin": "LL_GPIO_PIN_13",
+      "gpio": "GPIOB",
+      "pin": "LL_GPIO_PIN_4",
       "active_low": true,
       "key": "KEY_TELE",
       "name": "TELE",
@@ -153,7 +153,7 @@
     },
     {
       "gpio": "GPIOB",
-      "pin": "LL_GPIO_PIN_4",
+      "pin": "LL_GPIO_PIN_5",
       "active_low": true,
       "key": "KEY_SYS",
       "name": "SYS",

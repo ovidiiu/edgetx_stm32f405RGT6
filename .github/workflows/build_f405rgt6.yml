@@ -1,0 +1,44 @@
+name: Build F405RGT6 capsule
+
+# Compiles the custom STM32F405RGT6 (LQFP64) minimal bring-up firmware in the
+# official EdgeTX dev container. Runs on pushes to the bring-up branch and can
+# be triggered manually. The .bin is uploaded as a build artifact.
+
+on:
+  push:
+    branches:
+      - f405rgt6-pinmap-bringup
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build f405rgt6
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/edgetx/edgetx-dev:latest
+      volumes:
+        - ${{ github.workspace }}:/src
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Build f405rgt6
+        env:
+          FLAVOR: f405rgt6
+          CMAKE_BUILD_PARALLEL_LEVEL: 4
+        run: |
+          echo "Building STM32F405RGT6 capsule firmware"
+          ./tools/build-gh.sh
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v7
+        with:
+          name: firmware-f405rgt6
+          path: |
+            fw.json
+            *.bin
+            *.uf2
+          retention-days: 15
+          if-no-files-found: warn

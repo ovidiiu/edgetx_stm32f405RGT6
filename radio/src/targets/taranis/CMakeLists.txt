@@ -277,6 +277,21 @@ elseif(PCB STREQUAL X7)
     if (NOT BLUETOOTH)
       set(AUX_SERIAL ON)
     endif()
+  elseif(PCBREV STREQUAL F405RGT6)
+    # Custom STM32F405RGT6 (LQFP64) capsule - minimal bring-up.
+    # Based on the Zorro/Boxer (F407 LQFP100) layout, with all I/O confined to
+    # ports A/B/C + PD2. See targets/taranis/F405RGT6_PINMAP.md for the full map.
+    set(DEFAULT_INTERNAL_MODULE CROSSFIRE CACHE STRING "Default internal module")
+    set(INTERNAL_MODULE_SERIAL YES)
+    set(MODULE_SIZE_SML YES)
+    set(FLAVOUR f405rgt6)
+    set(CPU_TYPE_FULL STM32F407xG)   # same die as F405RGT6: 1 MB flash, F407xx CMSIS
+    set(HARDWARE_EXTERNAL_MODULE NO) # minimal scope: internal module only
+    set(ROTARY_ENCODER NO)
+    set(HAPTIC NO)
+    set(STATUS_LEDS NO)
+    set(BLUETOOTH NO)
+    add_definitions(-DMANUFACTURER_RADIOMASTER)
   elseif(PCBREV STREQUAL GX12)
     set(DEFAULT_INTERNAL_MODULE CROSSFIRE CACHE STRING "Default internal module")
     set(INTERNAL_MODULE_SERIAL YES)
