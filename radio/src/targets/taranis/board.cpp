@@ -233,9 +233,6 @@ void boardInit()
     TRACE("adcInit failed");
 
   lcdInit(); // delaysInit() must be called before
-#if defined(RADIO_F405RGT6)
-  { void f405LcdTest(); f405LcdTest(); }  // BRING-UP: LCD stripe + contrast sweep (never returns)
-#endif
   audioInit();
 
 #if defined(LED_STRIP_GPIO)

@@ -255,7 +255,10 @@ void ledBlue();
 #define LCD_CONTRAST_DEFAULT            25
 #else
 #define IS_LCD_RESET_NEEDED()           true
-#if defined(OLED_SCREEN)
+#if defined(RADIO_F405RGT6)
+#define LCD_CONTRAST_MIN                20
+#define LCD_CONTRAST_MAX                63
+#elif defined(OLED_SCREEN)
 #define LCD_CONTRAST_MIN                2
 #define LCD_CONTRAST_MAX                254
 #else
@@ -269,7 +272,9 @@ void ledBlue();
 #define LCD_BRIGHTNESS_DEFAULT          30
 #endif
 
-#if defined(OLED_SCREEN)
+#if defined(RADIO_F405RGT6)
+  #define LCD_CONTRAST_DEFAULT          53 // measured working Vop for this panel
+#elif defined(OLED_SCREEN)
   #define LCD_CONTRAST_DEFAULT          254 // full brightness
 #elif defined(RADIO_TX12) || defined(RADIO_TX12MK2) || defined(RADIO_BOXER) || defined(RADIO_MT12)
   #define LCD_CONTRAST_DEFAULT          20
