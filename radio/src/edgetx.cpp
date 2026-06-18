@@ -1475,7 +1475,9 @@ void edgeTxInit()
 #endif
 
   // Load radio.yml so radio settings can be used
-#if defined(RTC_BACKUP_RAM)
+#if defined(RADIO_F405RGT6)
+  // BRING-UP: skip SD radio settings (SD hangs boot); use RAM defaults
+#elif defined(RTC_BACKUP_RAM)
   // Skip loading if EM startup and radio has RTC backup data
   if (!UNEXPECTED_SHUTDOWN())
     storageReadRadioSettings(false);
@@ -1515,6 +1517,7 @@ void edgeTxInit()
 #endif
 
   // SDCARD related stuff, only enable if normal boot
+#if !defined(RADIO_F405RGT6)  // BRING-UP: skip all SD card access
   if (!UNEXPECTED_SHUTDOWN()) {
 
     if (!sdMounted())
@@ -1544,6 +1547,7 @@ void edgeTxInit()
 
     logsInit();
   }
+#endif  // !RADIO_F405RGT6
 
   luaInitMainState();
 #if defined(COLORLCD) && defined(LUA)
@@ -1554,7 +1558,10 @@ void edgeTxInit()
 #endif
 
   // handling of storage for radios
-#if defined(RTC_BACKUP_RAM) && !defined(SIMU)
+#if defined(RADIO_F405RGT6)
+  // BRING-UP: no SD storage; run with RAM defaults
+  logicalSwitchesInit(true);
+#elif defined(RTC_BACKUP_RAM) && !defined(SIMU)
   if (UNEXPECTED_SHUTDOWN()) {
     // SDCARD not available, try to restore last model from RAM
     TRACE("rambackupRestore");

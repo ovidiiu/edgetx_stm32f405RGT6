@@ -526,10 +526,12 @@ void perMain()
 
   checkSpeakerVolume();
 
+#if !defined(RADIO_F405RGT6)  // BRING-UP: no SD storage
   if (!usbPlugged() || (getSelectedUsbMode() == USB_UNSELECTED_MODE)) {
     checkStorageUpdate();
     initLoggingTimer();  // initialize software timer for logging
   }
+#endif
 
   handleUsbConnection();
 
