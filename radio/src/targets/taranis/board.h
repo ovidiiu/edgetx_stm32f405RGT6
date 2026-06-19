@@ -256,8 +256,9 @@ void ledBlue();
 #else
 #define IS_LCD_RESET_NEEDED()           true
 #if defined(RADIO_F405RGT6)
-#define LCD_CONTRAST_MIN                20
-#define LCD_CONTRAST_MAX                63
+// SH1106 OLED: contrast register (0x81) is the 0..255 segment-current setting.
+#define LCD_CONTRAST_MIN                2
+#define LCD_CONTRAST_MAX                254
 #elif defined(OLED_SCREEN)
 #define LCD_CONTRAST_MIN                2
 #define LCD_CONTRAST_MAX                254
@@ -273,7 +274,7 @@ void ledBlue();
 #endif
 
 #if defined(RADIO_F405RGT6)
-  #define LCD_CONTRAST_DEFAULT          62 // near-max Vop: panel was too faint at 53
+  #define LCD_CONTRAST_DEFAULT          128 // SH1106 OLED: ~50% segment current
 #elif defined(OLED_SCREEN)
   #define LCD_CONTRAST_DEFAULT          254 // full brightness
 #elif defined(RADIO_TX12) || defined(RADIO_TX12MK2) || defined(RADIO_BOXER) || defined(RADIO_MT12)

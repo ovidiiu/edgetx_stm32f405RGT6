@@ -118,7 +118,7 @@ void lcdHardwareInit()
 #endif
 }
 
-#if defined(SSD1309_LCD)
+#if defined(SSD1309_LCD) || defined(SH1106_LCD)
 void lcdColumnSet(unsigned char column)
 {
   lcdWriteCommand(0x10|(column >> 4));
@@ -134,7 +134,28 @@ void lcdPageSet(unsigned char page)
 #if LCD_W == 128
 void lcdStart()
 {
-#if defined(SSD1309_LCD)
+#if defined(SH1106_LCD)
+   // SH1106 1.3" mono OLED, internal DC-DC, 132x64 RAM.
+   lcdWriteCommand(0xAE);                          // Display OFF
+   lcdWriteCommand(0xD5); lcdWriteCommand(0x80);   // Clock divide ratio / OSC freq
+   lcdWriteCommand(0xA8); lcdWriteCommand(0x3F);   // Multiplex ratio 1/64
+   lcdWriteCommand(0xD3); lcdWriteCommand(0x00);   // Display offset 0
+   lcdWriteCommand(0x40);                          // Display start line 0
+   lcdWriteCommand(0xAD); lcdWriteCommand(0x8B);   // DC-DC control: internal DC-DC ON
+   lcdWriteCommand(0x33);                          // Pump voltage 9.0V
+   lcdWriteCommand(0xA1);                          // Segment remap (mirror X)
+   lcdWriteCommand(0xC8);                          // COM scan direction (flip Y)
+   lcdWriteCommand(0xDA); lcdWriteCommand(0x12);   // COM pins: alternative config
+   lcdWriteCommand(0xD9); lcdWriteCommand(0x22);   // Pre-charge period
+   lcdWriteCommand(0xDB); lcdWriteCommand(0x35);   // VCOMH deselect level
+   lcdWriteCommand(0xA4);                          // Resume display from RAM
+   lcdWriteCommand(0xA6);                          // Normal (non-inverted)
+#if defined(BOOT)
+   lcdSetRefVolt(LCD_CONTRAST_DEFAULT);
+#else
+   lcdSetRefVolt(g_eeGeneral.contrast);
+#endif
+#elif defined(SSD1309_LCD)
    lcdWriteCommand(0xD5);  // Set Display Clock Divide Ratio / OSC Frequency
    lcdWriteCommand(0x80);  // Display Clock Divide Ratio / OSC Frequency
    lcdWriteCommand(0xA8);  // Set Multiplex Ratio
@@ -291,7 +312,10 @@ void lcdRefresh(bool wait)
   lcdWriteCommand(LCD_W_OFFSET);
 #endif
   for (uint8_t y=0; y < 8; y++, p+=LCD_W) {
-#if defined(SSD1309_LCD)
+#if defined(SH1106_LCD)
+    lcdPageSet(y);
+    lcdColumnSet(2);   // 132-col RAM: visible 128px window starts at column 2
+#elif defined(SSD1309_LCD)
     lcdPageSet(y);
     lcdColumnSet(0);
 #else

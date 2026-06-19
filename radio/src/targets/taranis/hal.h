@@ -1013,6 +1013,13 @@
   #define SSD1309_LCD
 #endif
 #if defined(RADIO_F405RGT6)
+  // 1.3" SH1106 mono OLED on SPI3 (panel converted from I2C to 4-wire SPI).
+  // SH1106 has 132-column RAM, so the visible 128px window starts at column 2
+  // (handled in lcd_driver_spi.cpp). Driven as a plain 1bpp panel (no
+  // OLED_SCREEN, so the standard mono UI layout is used).
+  #define SH1106_LCD
+#endif
+#if defined(RADIO_F405RGT6)
   // Hardware SPI3 (AF6) moved to PB.03/PB.05 so PC.10-12 are free for SDIO.
   // Control lines on PB.12-14 (freed from SPI2 SD, now on SDIO).
   #define LCD_MOSI_GPIO                 GPIO_PIN(GPIOB, 5)  // PB.05  SPI3_MOSI
