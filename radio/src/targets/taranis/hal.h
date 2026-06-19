@@ -54,22 +54,24 @@
 
 // Rotary Encoder
 #if defined(RADIO_F405RGT6)
-  // Primary menu navigation. Encoder A/B on PB.10/PB.11 (the freed PAGEUP/
-  // PAGEDN key pins); push-button wired to PA.05 = KEY_ENTER. Rotation scrolls
+  // Primary menu navigation. Encoder A/B on PB.08/PB.09 (the I2C1 SCL/SDA pins).
+  // PB.10/PB.11 are not broken out on the WeAct F405 core-board header, so the
+  // encoder moved here; I2C is unused on this board (SOFTWARE_VOLUME, no EEPROM),
+  // which frees PB.08/PB.09. Push-button -> PA.05 = KEY_ENTER. Rotation scrolls
   // fields and changes menu pages (NAVIGATION_X7_RM maps NEXT_PAGE to rotary).
   #define ROTARY_ENCODER_NAVIGATION
   #define ROTARY_ENCODER_GPIO             GPIOB
-  #define ROTARY_ENCODER_GPIO_PIN_A       LL_GPIO_PIN_10 // PB.10
-  #define ROTARY_ENCODER_GPIO_PIN_B       LL_GPIO_PIN_11 // PB.11
-  #define ROTARY_ENCODER_POSITION()       ((ROTARY_ENCODER_GPIO->IDR >> 10) & 0x03)
-  #define ROTARY_ENCODER_EXTI_LINE1       LL_EXTI_LINE_10
-  #define ROTARY_ENCODER_EXTI_LINE2       LL_EXTI_LINE_11
+  #define ROTARY_ENCODER_GPIO_PIN_A       LL_GPIO_PIN_8  // PB.08
+  #define ROTARY_ENCODER_GPIO_PIN_B       LL_GPIO_PIN_9  // PB.09
+  #define ROTARY_ENCODER_POSITION()       ((ROTARY_ENCODER_GPIO->IDR >> 8) & 0x03)
+  #define ROTARY_ENCODER_EXTI_LINE1       LL_EXTI_LINE_8
+  #define ROTARY_ENCODER_EXTI_LINE2       LL_EXTI_LINE_9
   #define ROTARY_ENCODER_EXTI_PORT        LL_SYSCFG_EXTI_PORTB
-  #define ROTARY_ENCODER_EXTI_SYS_LINE1   LL_SYSCFG_EXTI_LINE10
-  #define ROTARY_ENCODER_EXTI_SYS_LINE2   LL_SYSCFG_EXTI_LINE11
-  #if !defined(USE_EXTI15_10_IRQ)
-    #define USE_EXTI15_10_IRQ
-    #define EXTI15_10_IRQ_Priority 5
+  #define ROTARY_ENCODER_EXTI_SYS_LINE1   LL_SYSCFG_EXTI_LINE8
+  #define ROTARY_ENCODER_EXTI_SYS_LINE2   LL_SYSCFG_EXTI_LINE9
+  #if !defined(USE_EXTI9_5_IRQ)
+    #define USE_EXTI9_5_IRQ
+    #define EXTI9_5_IRQ_Priority 5
   #endif
 #elif defined(PCBX9E)
   #define ROTARY_ENCODER_NAVIGATION

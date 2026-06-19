@@ -287,11 +287,13 @@ elseif(PCB STREQUAL X7)
     set(FLAVOUR f405rgt6)
     set(CPU_TYPE_FULL STM32F407xG)   # same die as F405RGT6: 1 MB flash, F407xx CMSIS
     set(HARDWARE_EXTERNAL_MODULE NO) # minimal scope: internal module only
-    set(ROTARY_ENCODER YES)          # primary menu nav: encoder on PB10/PB11, push=ENTER
+    set(ROTARY_ENCODER YES)          # primary menu nav: encoder on PB8/PB9, push=ENTER
     set(HAPTIC YES)                  # provides per5ms(); GPIO haptic on PC6 (inert)
     set(STATUS_LEDS NO)
     set(BLUETOOTH NO)
-    add_definitions(-DMANUFACTURER_RADIOMASTER)
+    # No volume IC (audio is the PA4 DAC); SOFTWARE_VOLUME disables the I2C1
+    # volume driver so PB8/PB9 are free for the rotary encoder.
+    add_definitions(-DMANUFACTURER_RADIOMASTER -DSOFTWARE_VOLUME)
   elseif(PCBREV STREQUAL GX12)
     set(DEFAULT_INTERNAL_MODULE CROSSFIRE CACHE STRING "Default internal module")
     set(INTERNAL_MODULE_SERIAL YES)

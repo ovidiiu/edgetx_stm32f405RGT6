@@ -162,8 +162,8 @@ Primary navigation is a **rotary encoder** (NAVIGATION_X7_RM maps page change to
 rotation, so the knob both scrolls fields and changes pages). Push = ENTER.
 | Function | Pin | Notes |
 |---|---|---|
-| Encoder A | PB10 | EXTI10, internal pull-up |
-| Encoder B | PB11 | EXTI11, internal pull-up |
+| Encoder A | PB8 | EXTI8, internal pull-up (PB10/PB11 not on WeAct header) |
+| Encoder B | PB9 | EXTI9, internal pull-up |
 | ENTER (encoder push) | PA5 | KEY_ENTER, active-low |
 | EXIT | PC13 | back/cancel |
 | MDL | PB4 | model select menu |
@@ -251,5 +251,5 @@ cmake -DPCB=X7 -DPCBREV=F405RGT6 ...
 - **Status LEDs** disabled (`STATUS_LEDS NO`); **haptic** declared but inert (PC6).
 - **Backlight** has no firmware control — hardwired to VCC; PA10 reused for switch SC.
 
-Wired and functional: rotary encoder (PB10/PB11 + push PA5), 5 switches, analog
+Wired and functional: rotary encoder (PB8/PB9 + push PA5), 5 switches, analog
 trims, onboard microSD over SDIO.
