@@ -5,8 +5,8 @@ custom **STM32F405RGT6 (LQFP64)** capsule.
 
 Scope of this document: **minimal bring-up** — enough to boot, drive the LCD/UI,
 read sticks, mount the SD card, talk to one (internal) module, and enumerate over
-USB. External module, trainer, telemetry, haptic, rotary encoder, switches and
-trims are intentionally deferred (pins reserved below).
+USB. A rotary encoder, 5 switches and analog trims are wired; external module,
+trainer, telemetry and haptic are intentionally deferred (pins reserved below).
 
 ---
 
@@ -54,11 +54,11 @@ aren't enough pins for the full radio, which is why this bring-up is minimal.
  -8  sticks x4, pots x2, VBAT, audio DAC   (PA0-4,6 / PB0 / PC0)
  -3  USB                                   (PA9/11/12)
  -2  SWD debug                             (PA13/14)
- -4  SD card SPI2                          (PB12-15)
+ -6  SD card SDIO 4-bit                    (PC8-12, PD2)
  -4  internal module                       (PB6/7, PC4, PB1)
- -5  LCD soft-SPI                          (PC10/11/12, PD2, PC3)
- -2  backlight + power latch
- ~  remainder -> keys / future peripherals
+ -5  LCD hardware SPI3                      (PB3/5/12/13/14)
+ -0  backlight hardwired to VCC, no power latch (no pins)
+ ~  remainder -> keys / switches / rotary
 ```
 
 ## 4. Pin assignment (minimal bring-up)
@@ -109,29 +109,39 @@ true and the (non-`PWR_BUTTON_PRESS`) `pwrCheck()` keeps the radio powered on.
 
 DMA: TX = DMA2_Stream7_Ch4, RX = DMA2_Stream2_Ch4 (as source).
 
-### SD card — SPI2 (AF5)
+### SD card — onboard microSD via SDIO 4-bit (AF12)
 | Func | Pin |
 |---|---|
-| SD_SCK | PB13 |
-| SD_MISO | PB14 |
-| SD_MOSI | PB15 |
-| SD_CS | PB12 (soft) |
+| SDIO_D0 | PC8 |
+| SDIO_D1 | PC9 |
+| SDIO_D2 | PC10 |
+| SDIO_D3 | PC11 |
+| SDIO_CK | PC12 |
+| SDIO_CMD | PD2 |
 | SD_PRESENT | *none* — card assumed always present |
 
-DMA: DMA1_Stream3 (RX) / Stream4 (TX), Ch0.
+Pins are the fixed STM32F4 SDIO assignment (hardcoded AF12 in the SDIO driver),
+so PC8-12 + PD2 are consumed here. DMA: DMA1_Stream3. `STORAGE_USE_SDIO`.
 
-### LCD — hardware SPI3 (AF6), same as PCBX7 except RST
+### LCD — hardware SPI3 (AF6)
+Relocated off port C onto PB.03/PB.05 so PC.10-12 are free for the SDIO data
+lines above; control lines on PB.12-14 (freed from the old SPI2 SD wiring).
 | Func | Pin |
 |---|---|
-| LCD_CLK | PC10 (SPI3_SCK) |
-| LCD_MOSI | PC12 (SPI3_MOSI) |
-| LCD_A0 (D/C) | PC11 (GPIO) |
-| LCD_NCS | PA15 (GPIO) |
-| LCD_RST | PC3 (GPIO — moved off PD12) |
-| Backlight | PA10 (TIM1_CH3 AF1, BDTR/MOE set) |
+| LCD_CLK | PB3 (SPI3_SCK) |
+| LCD_MOSI | PB5 (SPI3_MOSI) |
+| LCD_A0 (D/C) | PB12 (GPIO) |
+| LCD_NCS | PB13 (GPIO) |
+| LCD_RST | PB14 (GPIO) |
+| Backlight | *no pin* — hardwired to VCC (always on); see below |
 
 DMA: DMA1_Stream7. Driver: `lcd_driver_spi.cpp` (128×64 mono). Match the
 controller to your physical display.
+
+> **Backlight:** the panel backlight is tied directly to VCC, so there is no
+> firmware brightness control. `BACKLIGHT_GPIO` is left undefined, which makes
+> `backlight_driver.cpp` compile to no-op stubs and frees **PA.10 for switch
+> SC**.
 
 ### I²C1 (EEPROM) — AF4
 | Func | Pin |
@@ -142,12 +152,10 @@ controller to your physical display.
 
 > Populate a 24Cxx EEPROM on PB8/PB9, or move settings storage to SD.
 
-### Trainer — TIM3 (AF2), defaults already on safe pins
-| Func | Pin |
-|---|---|
-| TRAINER_IN | PC8 (TIM3_CH3) |
-| TRAINER_OUT | PC9 (TIM3_CH4) |
-| TRAINER_DETECT | PA8 |
+### Trainer — disabled
+No trainer port in this build: its former pins PC.08/PC.09 are now the SDIO
+microSD data lines (SDIO_D0/D1). Re-adding trainer means finding free TIM
+channels elsewhere — there is no spare pin pair in the minimal map.
 
 ### Menu navigation — rotary encoder + keys
 Primary navigation is a **rotary encoder** (NAVIGATION_X7_RM maps page change to
@@ -166,26 +174,30 @@ Minimum to navigate everything: encoder + EXIT + MDL + SYS. PAGEUP/PAGEDN keys
 removed (their pins are now the encoder); paging is done by the rotary.
 
 ### Switches (5× 2-position, GPIO, active-low pull-up)
-| Switch | Pin |
-|---|---|
-| SA | PC5 |
-| SB | PA15 |
-| SC | PA10 |
-| SD | PA8 |
-| SE | PC7 |
+| Switch | Pin | Notes |
+|---|---|---|
+| SA | PC5 | |
+| SB | PA15 | |
+| SC | PA10 | freed from backlight (backlight hardwired to VCC) |
+| SD | PA8 | |
+| SE | PC7 | shares pin with EEPROM_WP — OK while no I²C EEPROM is fitted |
 
 ## 5. Pins reserved for later expansion
 
+The minimal map is now nearly full — the SDIO microSD (PC8-12 + PD2) and the
+relocated LCD (PB3/PB5/PB12-14) consumed most of the pins this table previously
+offered. What is realistically left:
+
 | Future function | Suggested pins | Constraint |
 |---|---|---|
-| External module | PC6 (TIM8_CH1 / USART6_TX), PC7 (USART6_RX), PWR=PB5 | PPM/PXX needs TIM8_CH1 → PC6 |
-| Trainer | PC8 (TIM3_CH3), PC9 (TIM3_CH4), detect=PB9 | |
-| Haptic | PB3 (TIM2_CH2 AF1) | |
-| Rotary encoder | PB10 + PB11 (EXTI) | |
-| I²C EEPROM / IMU | PB10/PB11 (I²C2 AF4) | conflicts with rotary — pick one |
+| External module | PC6 (TIM8_CH1 / USART6_TX) | RX/PWR pins must be stolen from a switch/key; PB3/PB5 are no longer free (LCD) |
+| Haptic | PC6 (declared, inert) | currently the only spare; conflicts with ext-module TX |
 | Telemetry (S.PORT) | **see warning below** | |
 
-Still free after the above: PB2 (BOOT1 — input-only, avoid driving), PB5.
+Trainer, a second rotary, and an I²C EEPROM no longer have free pins in this
+build (their former candidates PC8/PC9, PB10/PB11, PB3/PB5 are all in use).
+
+Still free after the above: only **PB2** (BOOT1 — input-only, avoid driving).
 
 ## 6. Known hard constraints (read before adding peripherals)
 
@@ -236,4 +248,8 @@ cmake -DPCB=X7 -DPCBREV=F405RGT6 ...
 - **Telemetry** stays on USART2 (PD4/5/6) — compiles but won't work until moved
   to another USART in the driver.
 - **External module / heartbeat** disabled (`HARDWARE_EXTERNAL_MODULE NO`).
-- **Status LEDs, haptic, rotary** disabled.
+- **Status LEDs** disabled (`STATUS_LEDS NO`); **haptic** declared but inert (PC6).
+- **Backlight** has no firmware control — hardwired to VCC; PA10 reused for switch SC.
+
+Wired and functional: rotary encoder (PB10/PB11 + push PA5), 5 switches, analog
+trims, onboard microSD over SDIO.

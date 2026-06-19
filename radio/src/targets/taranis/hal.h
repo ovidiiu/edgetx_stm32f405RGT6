@@ -944,15 +944,10 @@
 
 // BackLight
 #if defined(RADIO_F405RGT6)
-  // TIM1_CH3 on PA.10 (advanced timer -> BDTR/MOE required)
-  #define BACKLIGHT_TIMER_FREQ          (PERI2_FREQUENCY * TIMER_MULT_APB2)
-  #define BACKLIGHT_TIMER               TIM1
-  #define BACKLIGHT_GPIO                GPIO_PIN(GPIOA, 10) // PA.10
-  #define BACKLIGHT_GPIO_AF             GPIO_AF1
-  #define BACKLIGHT_CCMR2               TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2 // Channel 3, PWM
-  #define BACKLIGHT_CCER                TIM_CCER_CC3E
-  #define BACKLIGHT_COUNTER_REGISTER    BACKLIGHT_TIMER->CCR3
-  #define BACKLIGHT_BDTR                TIM_BDTR_MOE
+  // No firmware backlight control: the panel backlight is hardwired to VCC
+  // (always on). Leaving BACKLIGHT_GPIO undefined makes backlight_driver.cpp
+  // compile to no-op stubs, so PA.10 is never claimed as a timer output and is
+  // free for switch SC (see f405rgt6.json).
 #elif defined(PCBX9E)
   #define BACKLIGHT_TIMER_FREQ          (PERI2_FREQUENCY * TIMER_MULT_APB2)
   #define BACKLIGHT_TIMER               TIM9
