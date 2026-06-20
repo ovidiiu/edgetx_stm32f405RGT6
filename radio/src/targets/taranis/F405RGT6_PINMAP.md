@@ -168,10 +168,16 @@ rotation, so the knob both scrolls fields and changes pages). Push = ENTER.
 | EXIT | PC13 | back/cancel |
 | MDL | PB4 | model select menu |
 | SYS | PA7 | radio settings menu |
-| TELE | PB15 | telemetry view (optional) |
+| PAGE | PB15 | menu page/tab: short = next, long = previous |
 
-Minimum to navigate everything: encoder + EXIT + MDL + SYS. PAGEUP/PAGEDN keys
-removed (their pins are now the encoder); paging is done by the rotary.
+Minimum to navigate everything: encoder + EXIT + MDL + SYS + **PAGE**. The rotary
+only scrolls fields/values; switching between the *tabs* of a settings menu
+(Tools / SD / Setup / Hardware / Version, etc.) requires a PAGE key
+(`navigation_x7.cpp` changes tabs on `KEY_PAGEUP`/`KEY_PAGEDN` only). This build
+has a single `KEY_PAGEDN` on PB15: short press = next tab, long press = previous
+tab (EdgeTX maps long-PAGEDN to PAGEUP when only one page key exists). The
+dedicated telemetry-view shortcut (former TELE key) is dropped to free this pin;
+telemetry screens are still reachable via the model menu's Telemetry tab.
 
 ### Switches (5× 2-position, GPIO, active-low pull-up)
 | Switch | Pin | Notes |

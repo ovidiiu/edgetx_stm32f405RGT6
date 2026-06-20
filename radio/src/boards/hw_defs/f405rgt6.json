@@ -208,9 +208,9 @@
       "gpio": "GPIOB",
       "pin": "LL_GPIO_PIN_15",
       "active_low": true,
-      "key": "KEY_TELE",
-      "name": "TELE",
-      "label": "TELE"
+      "key": "KEY_PAGEDN",
+      "name": "PAGEDN",
+      "label": "</>"
     },
     {
       "gpio": "GPIOA",
