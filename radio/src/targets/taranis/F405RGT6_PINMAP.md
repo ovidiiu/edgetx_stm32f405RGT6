@@ -177,6 +177,14 @@ full-duplex, 400 kbaud; telemetry returns on INT_RX (no separate S.PORT pin).
 
 DMA: TX = DMA2_Stream7_Ch4, RX = DMA2_Stream2_Ch4 (as source).
 
+**Tested & working config** (DIY ESP32+SX1280 ELRS module, TX firmware):
+- Model Setup → **Internal RF → mode ON, CRSF, baud 915k (921600)**.
+- ELRS module CRSF UART on **GPIO3 = serial_rx** (← radio TX/PB6) and
+  **GPIO1 = serial_tx** (→ radio RX/PB7); full-duplex, non-inverted, 3V3.
+- ⚠️ **400k did NOT sync** on this setup — use **921600**. A purple slow-blink on
+  the module = it's receiving no valid CRSF (often dropped into WiFi mode); once
+  Internal RF is enabled at 921600 the link comes up.
+
 > ⚠️ An ELRS module draws ~0.5–1 A at high TX power — PC4 (3.3 V GPIO, ~25 mA)
 > cannot power it directly. The module is fed by an external **LM2596 buck** (set
 > to 5 V); **PC4 switches the buck's ON/OFF pin**, killing power at the source
@@ -328,8 +336,10 @@ cmake -DPCB=X7 -DPCBREV=F405RGT6 ...
 - [x] Register flavour in `tools/build-common.sh` + CI workflow `build_f405rgt6.yml`
 - [x] Green CI build (no remaining D/E/F/G references)
 - [x] Flash + bring up: **SH1106 OLED, sticks, switches, rotary+keys menu nav,
-      microSD, USB all tested and working on hardware**
-- [ ] Wire + test internal ELRS module (USART1/CRSF — pins reserved, firmware ready)
+      microSD, USB-HID all tested and working on hardware**
+- [x] Internal **ELRS module tested & working** over USART1/CRSF
+- [ ] Fix USB **mass-storage (SD)** mode hang (HID works; freeze is in
+      `edgeTxClose`/`sdDone` before `usbStart()` — see §USB note below)
 
 ### Build it
 - **Cloud (no local toolchain):** push to GitHub → the **Build F405RGT6 capsule**
@@ -346,4 +356,6 @@ cmake -DPCB=X7 -DPCBREV=F405RGT6 ...
 
 Wired and functional (tested on hardware): 1.3" SH1106 OLED over SPI3, 4 sticks +
 P1 pot + 4 analog trims, 5 switches, rotary encoder (PB8/PB9 + push PA5) and the
-EXIT/MDL/SYS/PAGE keys, onboard microSD over SDIO, and USB enumeration.
+EXIT/MDL/SYS/PAGE keys, onboard microSD over SDIO, USB-HID enumeration, and the
+internal **ELRS module** over USART1/CRSF (921600). Known issue: USB mass-storage
+(SD) mode hangs before enumerating — see §Internal/USB notes.
