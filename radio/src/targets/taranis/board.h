@@ -76,8 +76,19 @@ enum {
 };
 
 // Pulses driver
-#define INTERNAL_MODULE_ON()   gpio_set(INTMODULE_PWR_GPIO)
-#define INTERNAL_MODULE_OFF()  gpio_clear(INTMODULE_PWR_GPIO)
+#if defined(RADIO_F405RGT6)
+  // INTMODULE_PWR (PC4) drives the ON/OFF pin of an external LM2596 buck that
+  // powers the internal ELRS module. That pin is active-HIGH *shutdown*
+  // (LOW/GND = regulator on, HIGH = off) -- the inverse of the usual active-high
+  // enable -- so flip the sense: clear PC4 to power the module, set it to cut it.
+  // Pair with a 10k pull-up from ON/OFF to 3V3 so the module stays off through
+  // reset (PC4 is high-Z until pwr_driver inits it, then drives OFF = high).
+  #define INTERNAL_MODULE_ON()   gpio_clear(INTMODULE_PWR_GPIO)
+  #define INTERNAL_MODULE_OFF()  gpio_set(INTMODULE_PWR_GPIO)
+#else
+  #define INTERNAL_MODULE_ON()   gpio_set(INTMODULE_PWR_GPIO)
+  #define INTERNAL_MODULE_OFF()  gpio_clear(INTMODULE_PWR_GPIO)
+#endif
 
 #if (defined(INTERNAL_MODULE_PXX1) || defined(INTERNAL_MODULE_PXX2)) && (!defined(PCBX9LITE) || defined(PCBX9LITES))
   #define HARDWARE_INTERNAL_RAS

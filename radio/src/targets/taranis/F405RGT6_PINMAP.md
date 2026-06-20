@@ -104,7 +104,7 @@ soldering reference — the per-peripheral tables in §4 expand on it.
 | PC1 | Trim T3 (pot P4) | Analog | ADC1_IN11 |
 | PC2 | Trim T4 (pot P5) | Analog | ADC1_IN12 |
 | PC3 | Trim T2 (pot P3) | Analog | ADC1_IN13 |
-| PC4 | INT_PWR | Int module | ELRS power enable, out |
+| PC4 | INT_PWR | Int module | LM2596 ON/OFF, out, **active-low** (low=on) |
 | PC5 | Switch SA | Switch | 2-pos, active-low |
 | PC6 | *(spare)* | — | haptic / ext-module candidate (inert) |
 | PC7 | Switch SE | Switch | 2-pos, active-low (shared w/ unfitted EEPROM_WP) |
@@ -172,14 +172,22 @@ full-duplex, 400 kbaud; telemetry returns on INT_RX (no separate S.PORT pin).
 |---|---|---|
 | INT_TX | PB6 (USART1_TX) | module **RX** |
 | INT_RX | PB7 (USART1_RX) | module **TX** |
-| INT_PWR | PC4 (out) | power enable — gate a 5V load switch, *not* direct power |
+| INT_PWR | PC4 (out) | drives the **LM2596 ON/OFF** pin — **active-low** (see below) |
 | INT_BOOTCMD | PB1 (out) | module **BOOT/GPIO0** (passthrough flashing); idle = RESET |
 
 DMA: TX = DMA2_Stream7_Ch4, RX = DMA2_Stream2_Ch4 (as source).
 
 > ⚠️ An ELRS module draws ~0.5–1 A at high TX power — PC4 (3.3 V GPIO, ~25 mA)
-> cannot power it. Feed module VCC from **5 V through a P-MOSFET/load switch
-> gated by PC4**, or hardwire VCC (then EdgeTX can't power-cycle the module).
+> cannot power it directly. The module is fed by an external **LM2596 buck** (set
+> to 5 V); **PC4 switches the buck's ON/OFF pin**, killing power at the source
+> with ground kept common.
+>
+> **Polarity:** the LM2596 ON/OFF pin is active-HIGH *shutdown* (LOW/GND = on,
+> HIGH = off), the inverse of the usual enable. So `INTERNAL_MODULE_ON/OFF` are
+> **inverted for `RADIO_F405RGT6`** in `board.h` (PC4 low = module on, high =
+> off). Add a **10 kΩ pull-up from ON/OFF to 3V3** (not the 2S rail — ON/OFF max
+> is 6 V) so the module stays off through reset until firmware drives PC4 low.
+> Many LM2596S breakout boards tie ON/OFF to GND on the PCB — lift it to drive it.
 
 ### SD card — onboard microSD via SDIO 4-bit (AF12)
 | Func | Pin |
